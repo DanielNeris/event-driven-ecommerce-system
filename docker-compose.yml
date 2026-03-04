@@ -31,6 +31,7 @@ services:
       PORT: 3001
       KAFKA_BROKERS: 'kafka:19092'
       ORDER_DATABASE_URL: 'postgresql://order_user:order_pass@postgresql:5432/order_db'
+      DATABASE_URL: 'postgresql://order_user:order_pass@postgresql:5432/order_db'
       KAFKAJS_NO_PARTITIONER_WARNING: 1
     depends_on:
       kafka-init:
@@ -46,6 +47,7 @@ services:
     environment:
       KAFKA_BROKERS: 'kafka:19092'
       ORDER_DATABASE_URL: 'postgresql://order_user:order_pass@postgresql:5432/order_db'
+      DATABASE_URL: 'postgresql://order_user:order_pass@postgresql:5432/order_db'
       KAFKAJS_NO_PARTITIONER_WARNING: 1
     depends_on:
       kafka-init:
@@ -62,6 +64,7 @@ services:
       KAFKA_BROKERS: 'kafka:19092'
       REDIS_URL: 'redis://redis:6379'
       INVENTORY_DATABASE_URL: 'postgresql://inventory_user:inventory_pass@postgresql:5432/inventory_db'
+      DATABASE_URL: 'postgresql://inventory_user:inventory_pass@postgresql:5432/inventory_db'
       KAFKAJS_NO_PARTITIONER_WARNING: 1
     depends_on:
       kafka-init:
@@ -79,6 +82,7 @@ services:
     environment:
       KAFKA_BROKERS: 'kafka:19092'
       PAYMENT_DATABASE_URL: 'postgresql://payment_user:payment_pass@postgresql:5432/payment_db'
+      DATABASE_URL: 'postgresql://payment_user:payment_pass@postgresql:5432/payment_db'
       KAFKAJS_NO_PARTITIONER_WARNING: 1
     depends_on:
       kafka-init:
@@ -94,6 +98,7 @@ services:
     environment:
       KAFKA_BROKERS: 'kafka:19092'
       SHIPPING_DATABASE_URL: 'postgresql://shipping_user:shipping_pass@postgresql:5432/shipping_db'
+      DATABASE_URL: 'postgresql://shipping_user:shipping_pass@postgresql:5432/shipping_db'
       KAFKAJS_NO_PARTITIONER_WARNING: 1
     depends_on:
       kafka-init:
@@ -109,6 +114,7 @@ services:
     environment:
       KAFKA_BROKERS: 'kafka:19092'
       MESSAGERIA_DATABASE_URL: 'postgresql://messageria_user:messageria_pass@postgresql:5432/messageria_db'
+      DATABASE_URL: 'postgresql://messageria_user:messageria_pass@postgresql:5432/messageria_db'
       KAFKAJS_NO_PARTITIONER_WARNING: 1
     depends_on:
       kafka-init:

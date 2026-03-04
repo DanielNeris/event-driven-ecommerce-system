@@ -13,6 +13,7 @@ COPY package.json pnpm-lock.yaml ./
 RUN corepack enable && corepack prepare pnpm@latest --activate
 RUN pnpm install --frozen-lockfile --prod
 COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/prisma.config.js ./
 COPY --from=builder /app/apps/messageria-consumer-microservice/prisma ./apps/messageria-consumer-microservice/prisma
 ENV NODE_ENV=production
-CMD ["sh", "-c", "npx prisma migrate deploy --schema=apps/messageria-consumer-microservice/prisma/schema.prisma && exec node dist/apps/messageria-consumer-microservice/main.js"]
+CMD ["sh", "-c", "export DATABASE_URL=${DATABASE_URL:-$MESSAGERIA_DATABASE_URL} && npx prisma migrate deploy --schema=apps/messageria-consumer-microservice/prisma/schema.prisma && exec node dist/apps/messageria-consumer-microservice/main.js"]

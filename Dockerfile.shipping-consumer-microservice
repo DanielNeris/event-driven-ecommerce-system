@@ -13,6 +13,7 @@ COPY package.json pnpm-lock.yaml ./
 RUN corepack enable && corepack prepare pnpm@latest --activate
 RUN pnpm install --frozen-lockfile --prod
 COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/prisma.config.js ./
 COPY --from=builder /app/apps/shipping-consumer-microservice/prisma ./apps/shipping-consumer-microservice/prisma
 ENV NODE_ENV=production
-CMD ["sh", "-c", "npx prisma migrate deploy --schema=apps/shipping-consumer-microservice/prisma/schema.prisma && exec node dist/apps/shipping-consumer-microservice/main.js"]
+CMD ["sh", "-c", "export DATABASE_URL=${DATABASE_URL:-$SHIPPING_DATABASE_URL} && npx prisma migrate deploy --schema=apps/shipping-consumer-microservice/prisma/schema.prisma && exec node dist/apps/shipping-consumer-microservice/main.js"]
