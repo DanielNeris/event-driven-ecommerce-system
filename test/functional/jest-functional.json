@@ -1,0 +1,26 @@
+{
+  "moduleFileExtensions": ["js", "json", "ts"],
+  "rootDir": "../..",
+  "roots": ["<rootDir>/test/functional"],
+  "testEnvironment": "node",
+  "testRegex": "\\.functional-spec\\.ts$",
+  "transform": {
+    "^.+\\.(t|j)s$": "ts-jest"
+  },
+  "moduleNameMapper": {
+    "^@app/config(|/.*)$": "<rootDir>/libs/config/src/$1",
+    "^@app/contracts(|/.*)$": "<rootDir>/libs/contracts/src/$1",
+    "^@app/kafka(|/.*)$": "<rootDir>/libs/kafka/src/$1",
+    "^@app/opensearch(|/.*)$": "<rootDir>/libs/opensearch/src/$1",
+    "^@app/redis(|/.*)$": "<rootDir>/libs/redis/src/$1",
+    "^@app/api-gateway(|/.*)$": "<rootDir>/apps/api-gateway/src/$1",
+    "^@app/order-producer-microservice(|/.*)$": "<rootDir>/apps/order-producer-microservice/src/$1",
+    "^@app/order-consumer-microservice(|/.*)$": "<rootDir>/apps/order-consumer-microservice/src/$1",
+    "^@app/inventory-consumer-microservice(|/.*)$": "<rootDir>/apps/inventory-consumer-microservice/src/$1",
+    "^@app/payment-consumer-microservice(|/.*)$": "<rootDir>/apps/payment-consumer-microservice/src/$1",
+    "^@app/shipping-consumer-microservice(|/.*)$": "<rootDir>/apps/shipping-consumer-microservice/src/$1",
+    "^@app/messageria-consumer-microservice(|/.*)$": "<rootDir>/apps/messageria-consumer-microservice/src/$1",
+    "^@app/order-read-model-consumer-microservice(|/.*)$": "<rootDir>/apps/order-read-model-consumer-microservice/src/$1",
+    "^@app/opensearch-consumer-microservice(|/.*)$": "<rootDir>/apps/opensearch-consumer-microservice/src/$1"
+  }
+}

@@ -1,0 +1,40 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Order {
+  id        String   @id @db.Uuid
+  status    String   @default("PENDING") @db.VarChar(50)
+  items     Json     @default("[]")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("orders")
+}
+
+model Outbox {
+  id            BigInt    @id @default(autoincrement())
+  eventId       String    @unique @map("event_id") @db.Uuid
+  topic         String    @db.VarChar(255)
+  type          String    @db.VarChar(100)
+  payload       Json
+  correlationId String?   @map("correlation_id") @db.VarChar(255)
+  occurredAt    DateTime  @map("occurred_at")
+  publishedAt   DateTime? @map("published_at")
+
+  @@map("outbox")
+}
+
+model ProcessedEvent {
+  eventId     String   @map("event_id") @db.Uuid
+  consumer    String   @db.VarChar(100)
+  processedAt DateTime @default(now()) @map("processed_at")
+
+  @@id([eventId, consumer])
+  @@map("processed_events")
+}

@@ -1,0 +1,37 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Product {
+  productId     String   @id @map("product_id") @db.VarChar(255)
+  availableStock Int      @default(0) @map("available_stock")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  @@map("products")
+}
+
+model Reservation {
+  id        String   @id @default(uuid()) @db.Uuid
+  orderId   String   @map("order_id") @db.VarChar(255)
+  productId String   @map("product_id") @db.VarChar(255)
+  quantity  Int
+  status    String   @default("RESERVED") @db.VarChar(50)
+  expiresAt DateTime @map("expires_at")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("reservations")
+}
+
+model ProcessedEvent {
+  eventId     String   @map("event_id") @db.Uuid
+  consumer    String   @db.VarChar(100)
+  processedAt DateTime @default(now()) @map("processed_at")
+
+  @@id([eventId, consumer])
+  @@map("processed_events")
+}

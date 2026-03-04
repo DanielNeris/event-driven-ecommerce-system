@@ -1,0 +1,9 @@
+FROM node:24-alpine
+WORKDIR /app
+RUN corepack enable && corepack prepare pnpm@latest --activate
+COPY package.json pnpm-lock.yaml ./
+RUN pnpm install --frozen-lockfile
+COPY . .
+ENV NODE_ENV=development
+CMD ["pnpm", "exec", "nest", "start", "api-gateway", "--watch"]
+# Mount app source: -v $(pwd):/app (use docker-compose.dev)

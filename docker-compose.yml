@@ -1,0 +1,287 @@
+name: event-driven-commerce-system
+
+services:
+  api-gateway:
+    build:
+      context: .
+      dockerfile: Dockerfile.api-gateway
+    container_name: event-driven-commerce-system-api-gateway
+    ports:
+      - '3000:3000'
+    environment:
+      PORT: 3000
+      KAFKA_BROKERS: 'kafka:19092'
+      OPENSEARCH_NODE: 'http://opensearch:9200'
+      ORDER_SERVICE_URL: 'http://order-producer-microservice:3001'
+      KAFKAJS_NO_PARTITIONER_WARNING: 1
+    depends_on:
+      order-producer-microservice:
+        condition: service_started
+      opensearch:
+        condition: service_healthy
+
+  order-producer-microservice:
+    build:
+      context: .
+      dockerfile: Dockerfile.order-producer-microservice
+    container_name: event-driven-commerce-system-order-producer-microservice
+    ports:
+      - '3001:3001'
+    environment:
+      PORT: 3001
+      KAFKA_BROKERS: 'kafka:19092'
+      ORDER_DATABASE_URL: 'postgresql://order_user:order_pass@postgresql:5432/order_db'
+      KAFKAJS_NO_PARTITIONER_WARNING: 1
+    depends_on:
+      kafka-init:
+        condition: service_completed_successfully
+      postgresql:
+        condition: service_healthy
+
+  order-consumer-microservice:
+    build:
+      context: .
+      dockerfile: Dockerfile.order-consumer-microservice
+    container_name: event-driven-commerce-system-order-consumer-microservice
+    environment:
+      KAFKA_BROKERS: 'kafka:19092'
+      ORDER_DATABASE_URL: 'postgresql://order_user:order_pass@postgresql:5432/order_db'
+      KAFKAJS_NO_PARTITIONER_WARNING: 1
+    depends_on:
+      kafka-init:
+        condition: service_completed_successfully
+      postgresql:
+        condition: service_healthy
+
+  inventory-consumer-microservice:
+    build:
+      context: .
+      dockerfile: Dockerfile.inventory-consumer-microservice
+    container_name: event-driven-commerce-system-inventory-consumer-microservice
+    environment:
+      KAFKA_BROKERS: 'kafka:19092'
+      REDIS_URL: 'redis://redis:6379'
+      INVENTORY_DATABASE_URL: 'postgresql://inventory_user:inventory_pass@postgresql:5432/inventory_db'
+      KAFKAJS_NO_PARTITIONER_WARNING: 1
+    depends_on:
+      kafka-init:
+        condition: service_completed_successfully
+      redis:
+        condition: service_healthy
+      postgresql:
+        condition: service_healthy
+
+  payment-consumer-microservice:
+    build:
+      context: .
+      dockerfile: Dockerfile.payment-consumer-microservice
+    container_name: event-driven-commerce-system-payment-consumer-microservice
+    environment:
+      KAFKA_BROKERS: 'kafka:19092'
+      PAYMENT_DATABASE_URL: 'postgresql://payment_user:payment_pass@postgresql:5432/payment_db'
+      KAFKAJS_NO_PARTITIONER_WARNING: 1
+    depends_on:
+      kafka-init:
+        condition: service_completed_successfully
+      postgresql:
+        condition: service_healthy
+
+  shipping-consumer-microservice:
+    build:
+      context: .
+      dockerfile: Dockerfile.shipping-consumer-microservice
+    container_name: event-driven-commerce-system-shipping-consumer-microservice
+    environment:
+      KAFKA_BROKERS: 'kafka:19092'
+      SHIPPING_DATABASE_URL: 'postgresql://shipping_user:shipping_pass@postgresql:5432/shipping_db'
+      KAFKAJS_NO_PARTITIONER_WARNING: 1
+    depends_on:
+      kafka-init:
+        condition: service_completed_successfully
+      postgresql:
+        condition: service_healthy
+
+  messageria-consumer-microservice:
+    build:
+      context: .
+      dockerfile: Dockerfile.messageria-consumer-microservice
+    container_name: event-driven-commerce-system-messageria-consumer-microservice
+    environment:
+      KAFKA_BROKERS: 'kafka:19092'
+      MESSAGERIA_DATABASE_URL: 'postgresql://messageria_user:messageria_pass@postgresql:5432/messageria_db'
+      KAFKAJS_NO_PARTITIONER_WARNING: 1
+    depends_on:
+      kafka-init:
+        condition: service_completed_successfully
+      postgresql:
+        condition: service_healthy
+
+  order-read-model-consumer-microservice:
+    build:
+      context: .
+      dockerfile: Dockerfile.order-read-model-consumer-microservice
+    container_name: event-driven-commerce-system-order-read-model-consumer-microservice
+    environment:
+      KAFKA_BROKERS: 'kafka:19092'
+      OPENSEARCH_NODE: 'http://opensearch:9200'
+      KAFKAJS_NO_PARTITIONER_WARNING: 1
+    depends_on:
+      kafka-init:
+        condition: service_completed_successfully
+      opensearch:
+        condition: service_healthy
+
+  opensearch-consumer-microservice:
+    build:
+      context: .
+      dockerfile: Dockerfile.opensearch-consumer-microservice
+    container_name: event-driven-commerce-system-opensearch-consumer-microservice
+    environment:
+      KAFKA_BROKERS: 'kafka:19092'
+      OPENSEARCH_NODE: 'http://opensearch:9200'
+      KAFKAJS_NO_PARTITIONER_WARNING: 1
+    depends_on:
+      kafka-init:
+        condition: service_completed_successfully
+      opensearch:
+        condition: service_healthy
+
+  postgresql:
+    image: postgres:18-alpine
+    hostname: postgresql
+    ports:
+      - '5432:5432'
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+      - ./docker/init-multiple-dbs.sh:/docker-entrypoint-initdb.d/init-multiple-dbs.sh
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    hostname: redis
+    container_name: event-driven-commerce-system-redis
+    ports:
+      - '6379:6379'
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  conduktor-console:
+    image: conduktor/conduktor-console
+    ports:
+      - '8080:8080'
+    volumes:
+      - conduktor_data:/var/conduktor
+    environment:
+      CDK_DATABASE_URL: 'postgresql://postgres:postgres@postgresql:5432/postgres'
+      CDK_CLUSTERS_0_ID: 'default'
+      CDK_CLUSTERS_0_NAME: 'My Local Kafka Cluster'
+      CDK_CLUSTERS_0_COLOR: '#0013E7'
+      CDK_CLUSTERS_0_BOOTSTRAPSERVERS: 'PLAINTEXT://kafka:19092'
+    depends_on:
+      postgresql:
+        condition: service_healthy
+
+  kafka-init:
+    image: confluentinc/cp-kafka
+    container_name: event-driven-commerce-system-kafka-init
+    entrypoint: ['/bin/sh', '-c']
+    command:
+      - |
+        echo "Creating Kafka topics..."
+        for topic in order.events inventory.events payment.events shipping.events notification.events order.dlq inventory.dlq payment.dlq shipping.dlq notification.dlq; do
+          kafka-topics --bootstrap-server kafka:19092 --create --topic "$$topic" --partitions 3 --replication-factor 1 --if-not-exists || true
+        done
+        echo "Kafka topics ready."
+    depends_on:
+      kafka:
+        condition: service_healthy
+    restart: 'no'
+
+  kafka:
+    image: confluentinc/cp-kafka
+    hostname: kafka
+    container_name: event-driven-commerce-system-kafka
+    ports:
+      - '9092:9092'
+      - '29092:29092'
+      - '9999:9999'
+      - '9099:9099'
+    healthcheck:
+      test:
+        [
+          'CMD-SHELL',
+          'kafka-broker-api-versions --bootstrap-server localhost:19092 || exit 1',
+        ]
+      interval: 5s
+      timeout: 10s
+      retries: 10
+      start_period: 30s
+    environment:
+      CLUSTER_ID: MkU3OEVBNTcwNTJENDM2Qk
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_CONTROLLER_QUORUM_VOTERS: '1@kafka:9099'
+      KAFKA_LISTENERS: INTERNAL://0.0.0.0:19092,EXTERNAL://0.0.0.0:9092,DOCKER://0.0.0.0:29092,CONTROLLER://0.0.0.0:9099
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka:19092,EXTERNAL://${DOCKER_HOST_IP:-127.0.0.1}:9092,DOCKER://host.docker.internal:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT,DOCKER:PLAINTEXT,CONTROLLER:PLAINTEXT
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_LOG4J_LOGGERS: 'kafka.controller=INFO,kafka.producer.async.DefaultEventHandler=INFO,state.change.logger=INFO'
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_AUTHORIZER_CLASS_NAME: org.apache.kafka.metadata.authorizer.StandardAuthorizer
+      KAFKA_ALLOW_EVERYONE_IF_NO_ACL_FOUND: 'true'
+
+  opensearch:
+    image: opensearchproject/opensearch
+    container_name: event-driven-commerce-system-opensearch
+    environment:
+      discovery.type: single-node
+      plugins.security.disabled: 'true'
+      OPENSEARCH_INITIAL_ADMIN_PASSWORD: 'OpenSearch-dev1!'
+    ports:
+      - '9200:9200'
+      - '9600:9600'
+    volumes:
+      - opensearch_data:/usr/share/opensearch/data
+    healthcheck:
+      test:
+        [
+          'CMD-SHELL',
+          'curl -sS -u "admin:$$OPENSEARCH_INITIAL_ADMIN_PASSWORD" http://localhost:9200/_cluster/health || exit 1',
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 90s
+
+  opensearch-dashboards:
+    image: opensearchproject/opensearch-dashboards
+    container_name: event-driven-commerce-system-opensearch-dashboards
+    ports:
+      - '5601:5601'
+    environment:
+      OPENSEARCH_HOSTS: '["http://opensearch:9200"]'
+      DISABLE_SECURITY_DASHBOARDS_PLUGIN: 'true'
+      OPENSEARCH_USERNAME: 'admin'
+      OPENSEARCH_PASSWORD: 'OpenSearch-dev1!'
+    depends_on:
+      opensearch:
+        condition: service_healthy
+
+volumes:
+  pg_data: {}
+  conduktor_data: {}
+  opensearch_data: {}

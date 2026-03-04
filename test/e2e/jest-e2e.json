@@ -1,0 +1,18 @@
+{
+  "moduleFileExtensions": ["js", "json", "ts"],
+  "rootDir": "../..",
+  "roots": ["<rootDir>/test/e2e"],
+  "testEnvironment": "node",
+  "testRegex": "\\.e2e-spec\\.ts$",
+  "transform": {
+    "^.+\\.(t|j)s$": "ts-jest"
+  },
+  "moduleNameMapper": {
+    "^@app/config(|/.*)$": "<rootDir>/libs/config/src/$1",
+    "^@app/contracts(|/.*)$": "<rootDir>/libs/contracts/src/$1",
+    "^@app/kafka(|/.*)$": "<rootDir>/libs/kafka/src/$1",
+    "^@app/opensearch(|/.*)$": "<rootDir>/libs/opensearch/src/$1",
+    "^@app/opensearch-consumer-microservice(|/.*)$": "<rootDir>/apps/opensearch-consumer-microservice/src/$1",
+    "^@app/wikimedia-producer-microservice(|/.*)$": "<rootDir>/apps/wikimedia-producer-microservice/src/$1"
+  }
+}

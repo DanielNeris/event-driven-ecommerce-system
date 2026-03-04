@@ -1,0 +1,15 @@
+FROM node:24-alpine AS builder
+WORKDIR /app
+RUN corepack enable && corepack prepare pnpm@latest --activate
+COPY package.json pnpm-lock.yaml ./
+RUN pnpm install --frozen-lockfile
+COPY . .
+RUN pnpm run build && pnpm exec nest build wikimedia-producer-microservice
+
+FROM node:24-alpine
+WORKDIR /app
+COPY package.json pnpm-lock.yaml ./
+RUN pnpm install --frozen-lockfile --prod
+COPY --from=builder /app/dist ./dist
+ENV NODE_ENV=production
+CMD ["node", "dist/apps/wikimedia-producer-microservice/main.js"]

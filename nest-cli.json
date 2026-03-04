@@ -1,0 +1,150 @@
+{
+  "$schema": "https://json.schemastore.org/nest-cli",
+  "collection": "@nestjs/schematics",
+  "sourceRoot": "apps/api-gateway/src",
+  "compilerOptions": {
+    "deleteOutDir": true,
+    "webpack": true,
+    "webpackConfigPath": "webpack.config.js",
+    "tsConfigPath": "apps/api-gateway/tsconfig.app.json"
+  },
+  "monorepo": true,
+  "root": "apps/api-gateway",
+  "projects": {
+    "config": {
+      "type": "library",
+      "root": "libs/config",
+      "entryFile": "index",
+      "sourceRoot": "libs/config/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/config/tsconfig.lib.json"
+      }
+    },
+    "contracts": {
+      "type": "library",
+      "root": "libs/contracts",
+      "entryFile": "index",
+      "sourceRoot": "libs/contracts/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/contracts/tsconfig.lib.json"
+      }
+    },
+    "kafka": {
+      "type": "library",
+      "root": "libs/kafka",
+      "entryFile": "index",
+      "sourceRoot": "libs/kafka/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/kafka/tsconfig.lib.json"
+      }
+    },
+    "opensearch": {
+      "type": "library",
+      "root": "libs/opensearch",
+      "entryFile": "index",
+      "sourceRoot": "libs/opensearch/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/opensearch/tsconfig.lib.json"
+      }
+    },
+    "redis": {
+      "type": "library",
+      "root": "libs/redis",
+      "entryFile": "index",
+      "sourceRoot": "libs/redis/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/redis/tsconfig.lib.json"
+      }
+    },
+    "api-gateway": {
+      "type": "application",
+      "root": "apps/api-gateway",
+      "entryFile": "main",
+      "sourceRoot": "apps/api-gateway/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/api-gateway/tsconfig.app.json",
+        "plugins": [
+          {
+            "name": "@nestjs/swagger",
+            "options": {
+              "classValidatorShim": false,
+              "introspectComments": true
+            }
+          }
+        ]
+      }
+    },
+    "order-producer-microservice": {
+      "type": "application",
+      "root": "apps/order-producer-microservice",
+      "entryFile": "main",
+      "sourceRoot": "apps/order-producer-microservice/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/order-producer-microservice/tsconfig.app.json"
+      }
+    },
+    "order-consumer-microservice": {
+      "type": "application",
+      "root": "apps/order-consumer-microservice",
+      "entryFile": "main",
+      "sourceRoot": "apps/order-consumer-microservice/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/order-consumer-microservice/tsconfig.app.json"
+      }
+    },
+    "inventory-consumer-microservice": {
+      "type": "application",
+      "root": "apps/inventory-consumer-microservice",
+      "entryFile": "main",
+      "sourceRoot": "apps/inventory-consumer-microservice/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/inventory-consumer-microservice/tsconfig.app.json"
+      }
+    },
+    "payment-consumer-microservice": {
+      "type": "application",
+      "root": "apps/payment-consumer-microservice",
+      "entryFile": "main",
+      "sourceRoot": "apps/payment-consumer-microservice/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/payment-consumer-microservice/tsconfig.app.json"
+      }
+    },
+    "shipping-consumer-microservice": {
+      "type": "application",
+      "root": "apps/shipping-consumer-microservice",
+      "entryFile": "main",
+      "sourceRoot": "apps/shipping-consumer-microservice/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/shipping-consumer-microservice/tsconfig.app.json"
+      }
+    },
+    "messageria-consumer-microservice": {
+      "type": "application",
+      "root": "apps/messageria-consumer-microservice",
+      "entryFile": "main",
+      "sourceRoot": "apps/messageria-consumer-microservice/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/messageria-consumer-microservice/tsconfig.app.json"
+      }
+    },
+    "order-read-model-consumer-microservice": {
+      "type": "application",
+      "root": "apps/order-read-model-consumer-microservice",
+      "entryFile": "main",
+      "sourceRoot": "apps/order-read-model-consumer-microservice/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/order-read-model-consumer-microservice/tsconfig.app.json"
+      }
+    },
+    "opensearch-consumer-microservice": {
+      "type": "application",
+      "root": "apps/opensearch-consumer-microservice",
+      "entryFile": "main",
+      "sourceRoot": "apps/opensearch-consumer-microservice/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/opensearch-consumer-microservice/tsconfig.app.json"
+      }
+    }
+  }
+}

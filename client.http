@@ -1,0 +1,28 @@
+# Event-driven commerce – API Gateway (localhost:3000)
+
+### Create Order (rode primeiro; o orderId é usado automaticamente abaixo)
+# @name createOrder
+POST http://localhost:3000/orders
+Content-Type: application/json
+
+{
+  "items": [
+    { "productId": "prod-001", "quantity": 2 },
+    { "productId": "prod-002", "quantity": 1 }
+  ]
+}
+
+### Get Order by ID (usa orderId da resposta do Create Order)
+GET http://localhost:3000/orders/{{createOrder.response.body.orderId}}
+
+### Search Orders (sem filtro)
+GET http://localhost:3000/orders/search
+
+### Search Orders by status CONFIRMED
+GET http://localhost:3000/orders/search?status=CONFIRMED
+
+### Search Orders by status PENDING
+GET http://localhost:3000/orders/search?status=PENDING
+
+### Search Orders by query (usa orderId da resposta do Create Order)
+GET http://localhost:3000/orders/search?q={{createOrder.response.body.orderId}}

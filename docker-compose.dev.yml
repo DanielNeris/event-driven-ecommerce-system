@@ -1,0 +1,103 @@
+# Override for dev: build from .dev Dockerfiles, mount source, run with --watch.
+# Use: docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d --build
+
+services:
+  api-gateway:
+    image: event-driven-commerce-system-api-gateway-dev
+    build:
+      context: .
+      dockerfile: Dockerfile.api-gateway.dev
+    volumes:
+      - ./apps/api-gateway:/app/apps/api-gateway
+      - ./libs:/app/libs
+    command: pnpm exec nest start api-gateway --watch
+
+  order-producer-microservice:
+    image: event-driven-commerce-system-order-producer-microservice-dev
+    build:
+      context: .
+      dockerfile: Dockerfile.order-producer-microservice.dev
+    volumes:
+      - ./apps/order-producer-microservice:/app/apps/order-producer-microservice
+      - ./libs:/app/libs
+    command: pnpm exec nest start order-producer-microservice --watch
+
+  order-consumer-microservice:
+    image: event-driven-commerce-system-order-consumer-microservice-dev
+    build:
+      context: .
+      dockerfile: Dockerfile.order-consumer-microservice.dev
+    volumes:
+      - ./apps/order-consumer-microservice:/app/apps/order-consumer-microservice
+      - ./libs:/app/libs
+    command: pnpm exec nest start order-consumer-microservice --watch
+
+  inventory-consumer-microservice:
+    image: event-driven-commerce-system-inventory-consumer-microservice-dev
+    build:
+      context: .
+      dockerfile: Dockerfile.inventory-consumer-microservice.dev
+    volumes:
+      - ./apps/inventory-consumer-microservice:/app/apps/inventory-consumer-microservice
+      - ./libs:/app/libs
+    command: pnpm exec nest start inventory-consumer-microservice --watch
+
+  payment-consumer-microservice:
+    image: event-driven-commerce-system-payment-consumer-microservice-dev
+    build:
+      context: .
+      dockerfile: Dockerfile.payment-consumer-microservice.dev
+    volumes:
+      - ./apps/payment-consumer-microservice:/app/apps/payment-consumer-microservice
+      - ./libs:/app/libs
+    command: pnpm exec nest start payment-consumer-microservice --watch
+
+  shipping-consumer-microservice:
+    image: event-driven-commerce-system-shipping-consumer-microservice-dev
+    build:
+      context: .
+      dockerfile: Dockerfile.shipping-consumer-microservice.dev
+    volumes:
+      - ./apps/shipping-consumer-microservice:/app/apps/shipping-consumer-microservice
+      - ./libs:/app/libs
+    command: pnpm exec nest start shipping-consumer-microservice --watch
+
+  messageria-consumer-microservice:
+    image: event-driven-commerce-system-messageria-consumer-microservice-dev
+    build:
+      context: .
+      dockerfile: Dockerfile.messageria-consumer-microservice.dev
+    volumes:
+      - ./apps/messageria-consumer-microservice:/app/apps/messageria-consumer-microservice
+      - ./libs:/app/libs
+    command: pnpm exec nest start messageria-consumer-microservice --watch
+
+  order-read-model-consumer-microservice:
+    image: event-driven-commerce-system-order-read-model-consumer-microservice-dev
+    build:
+      context: .
+      dockerfile: Dockerfile.order-read-model-consumer-microservice.dev
+    volumes:
+      - ./apps/order-read-model-consumer-microservice:/app/apps/order-read-model-consumer-microservice
+      - ./libs:/app/libs
+    command: pnpm exec nest start order-read-model-consumer-microservice --watch
+
+  opensearch-consumer-microservice:
+    image: event-driven-commerce-system-opensearch-consumer-microservice-dev
+    build:
+      context: .
+      dockerfile: Dockerfile.opensearch-consumer-microservice.dev
+    environment:
+      KAFKA_BROKERS: 'kafka:19092'
+      OPENSEARCH_NODE: 'http://opensearch:9200'
+      KAFKAJS_NO_PARTITIONER_WARNING: 1
+    volumes:
+      - ./apps/opensearch-consumer-microservice:/app/apps/opensearch-consumer-microservice
+      - ./libs:/app/libs
+    command: pnpm exec nest start opensearch-consumer-microservice --watch
+    depends_on:
+      kafka:
+        condition: service_healthy
+      opensearch:
+        condition: service_healthy
+  # wikimedia-producer-microservice: add when apps/wikimedia-producer-microservice exists

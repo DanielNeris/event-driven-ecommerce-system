@@ -1,0 +1,18 @@
+FROM node:24-alpine AS builder
+WORKDIR /app
+RUN corepack enable && corepack prepare pnpm@latest --activate
+COPY package.json pnpm-lock.yaml ./
+RUN pnpm install --frozen-lockfile
+COPY . .
+ENV DATABASE_URL=postgresql://build:build@localhost:5432/build
+RUN pnpm exec prisma generate --schema=apps/inventory-consumer-microservice/prisma/schema.prisma && pnpm run build && pnpm exec nest build inventory-consumer-microservice
+
+FROM node:24-alpine
+WORKDIR /app
+COPY package.json pnpm-lock.yaml ./
+RUN corepack enable && corepack prepare pnpm@latest --activate
+RUN pnpm install --frozen-lockfile --prod
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/apps/inventory-consumer-microservice/prisma ./apps/inventory-consumer-microservice/prisma
+ENV NODE_ENV=production
+CMD ["sh", "-c", "npx prisma migrate deploy --schema=apps/inventory-consumer-microservice/prisma/schema.prisma && exec node dist/apps/inventory-consumer-microservice/main.js"]
