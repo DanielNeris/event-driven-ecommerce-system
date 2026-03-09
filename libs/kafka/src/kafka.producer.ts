@@ -86,4 +86,23 @@ export class KafkaProducer implements OnModuleInit {
       }),
     );
   }
+
+  /**
+   * Emit a message with Schema Registry–encoded value (buffer). No envelope.
+   * Use for topics that use Confluent serialization (Avro).
+   */
+  async emitEncoded(
+    topic: string,
+    key: string,
+    valueBuffer: Buffer,
+    headers?: Record<string, string>,
+  ): Promise<void> {
+    await lastValueFrom(
+      this.client.emit(topic, {
+        key,
+        value: valueBuffer,
+        headers,
+      }),
+    );
+  }
 }

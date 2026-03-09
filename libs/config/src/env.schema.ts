@@ -14,6 +14,8 @@ export const envSchema = z.object({
   OPENSEARCH_NODE: z.string().default('http://localhost:9200'),
   /** Redis URL. Use redis://redis:6379 in Docker. */
   REDIS_URL: z.string().default('redis://localhost:6379'),
+  /** Confluent Schema Registry URL. Use http://schema-registry:8081 in Docker. */
+  SCHEMA_REGISTRY_URL: z.string().default('http://localhost:8081'),
   /** HTTP server port (api-gateway 3000; order service 3001; etc.). */
   PORT: z
     .string()

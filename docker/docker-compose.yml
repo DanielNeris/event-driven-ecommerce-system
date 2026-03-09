@@ -3,8 +3,8 @@ name: event-driven-commerce-system
 services:
   api-gateway:
     build:
-      context: .
-      dockerfile: Dockerfile.api-gateway
+      context: ..
+      dockerfile: docker/Dockerfile.api-gateway
     container_name: event-driven-commerce-system-api-gateway
     ports:
       - '3000:3000'
@@ -22,8 +22,8 @@ services:
 
   order-producer-microservice:
     build:
-      context: .
-      dockerfile: Dockerfile.order-producer-microservice
+      context: ..
+      dockerfile: docker/Dockerfile.order-producer-microservice
     container_name: event-driven-commerce-system-order-producer-microservice
     ports:
       - '3001:3001'
@@ -41,8 +41,8 @@ services:
 
   order-consumer-microservice:
     build:
-      context: .
-      dockerfile: Dockerfile.order-consumer-microservice
+      context: ..
+      dockerfile: docker/Dockerfile.order-consumer-microservice
     container_name: event-driven-commerce-system-order-consumer-microservice
     environment:
       KAFKA_BROKERS: 'kafka:19092'
@@ -57,8 +57,8 @@ services:
 
   inventory-consumer-microservice:
     build:
-      context: .
-      dockerfile: Dockerfile.inventory-consumer-microservice
+      context: ..
+      dockerfile: docker/Dockerfile.inventory-consumer-microservice
     container_name: event-driven-commerce-system-inventory-consumer-microservice
     environment:
       KAFKA_BROKERS: 'kafka:19092'
@@ -76,8 +76,8 @@ services:
 
   payment-consumer-microservice:
     build:
-      context: .
-      dockerfile: Dockerfile.payment-consumer-microservice
+      context: ..
+      dockerfile: docker/Dockerfile.payment-consumer-microservice
     container_name: event-driven-commerce-system-payment-consumer-microservice
     environment:
       KAFKA_BROKERS: 'kafka:19092'
@@ -92,8 +92,8 @@ services:
 
   shipping-consumer-microservice:
     build:
-      context: .
-      dockerfile: Dockerfile.shipping-consumer-microservice
+      context: ..
+      dockerfile: docker/Dockerfile.shipping-consumer-microservice
     container_name: event-driven-commerce-system-shipping-consumer-microservice
     environment:
       KAFKA_BROKERS: 'kafka:19092'
@@ -108,8 +108,8 @@ services:
 
   messageria-consumer-microservice:
     build:
-      context: .
-      dockerfile: Dockerfile.messageria-consumer-microservice
+      context: ..
+      dockerfile: docker/Dockerfile.messageria-consumer-microservice
     container_name: event-driven-commerce-system-messageria-consumer-microservice
     environment:
       KAFKA_BROKERS: 'kafka:19092'
@@ -124,8 +124,8 @@ services:
 
   order-read-model-consumer-microservice:
     build:
-      context: .
-      dockerfile: Dockerfile.order-read-model-consumer-microservice
+      context: ..
+      dockerfile: docker/Dockerfile.order-read-model-consumer-microservice
     container_name: event-driven-commerce-system-order-read-model-consumer-microservice
     environment:
       KAFKA_BROKERS: 'kafka:19092'
@@ -139,8 +139,8 @@ services:
 
   opensearch-consumer-microservice:
     build:
-      context: .
-      dockerfile: Dockerfile.opensearch-consumer-microservice
+      context: ..
+      dockerfile: docker/Dockerfile.opensearch-consumer-microservice
     container_name: event-driven-commerce-system-opensearch-consumer-microservice
     environment:
       KAFKA_BROKERS: 'kafka:19092'
@@ -159,7 +159,7 @@ services:
       - '5432:5432'
     volumes:
       - pg_data:/var/lib/postgresql/data
-      - ./docker/init-multiple-dbs.sh:/docker-entrypoint-initdb.d/init-multiple-dbs.sh
+      - ./init-multiple-dbs.sh:/docker-entrypoint-initdb.d/init-multiple-dbs.sh
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
@@ -250,23 +250,46 @@ services:
       KAFKA_AUTHORIZER_CLASS_NAME: org.apache.kafka.metadata.authorizer.StandardAuthorizer
       KAFKA_ALLOW_EVERYONE_IF_NO_ACL_FOUND: 'true'
 
+  schema-registry:
+    image: confluentinc/cp-schema-registry
+    hostname: event-driven-commerce-system-schema-registry
+    container_name: event-driven-commerce-system-schema-registry
+    ports:
+      - '8081:8081'
+    environment:
+      SCHEMA_REGISTRY_HOST_NAME: event-driven-commerce-system-schema-registry
+      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: 'PLAINTEXT://kafka:19092'
+      SCHEMA_REGISTRY_LISTENERS: 'http://0.0.0.0:8081'
+    depends_on:
+      kafka:
+        condition: service_healthy
+
   opensearch:
     image: opensearchproject/opensearch
     container_name: event-driven-commerce-system-opensearch
     environment:
       discovery.type: single-node
       plugins.security.disabled: 'true'
+      OPENSEARCH_JAVA_OPTS: '-Xms512m -Xmx512m'
+      DISABLE_INSTALL_DEMO_CONFIG: 'true'
       OPENSEARCH_INITIAL_ADMIN_PASSWORD: 'OpenSearch-dev1!'
     ports:
       - '9200:9200'
       - '9600:9600'
     volumes:
       - opensearch_data:/usr/share/opensearch/data
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
     healthcheck:
       test:
         [
           'CMD-SHELL',
-          'curl -sS -u "admin:$$OPENSEARCH_INITIAL_ADMIN_PASSWORD" http://localhost:9200/_cluster/health || exit 1',
+          'curl -sS http://localhost:9200/_cluster/health || exit 1',
         ]
       interval: 10s
       timeout: 5s

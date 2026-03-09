@@ -1,3 +1,5 @@
+import type { EventType, TopicName } from '@app/contracts';
+
 /**
  * Environment variables expected by libs/kafka
  */
@@ -8,3 +10,15 @@ export type KafkaEnv = {
    */
   KAFKA_BROKERS: string;
 };
+
+export interface AvroRecordSchema<TPayload> {
+  topic: TopicName;
+  type: EventType;
+  payload?: TPayload;
+  key?: string;
+  correlationId?: string;
+  version?: number;
+  occurredAt?: string;
+  headers?: Record<string, string>;
+  eventId?: string;
+}

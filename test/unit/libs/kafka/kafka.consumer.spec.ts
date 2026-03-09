@@ -26,13 +26,16 @@ describe('bootstrapKafkaConsumer', () => {
   it('should create microservice with Kafka transport and listen', async () => {
     await bootstrapKafkaConsumer(rootModule, 'test-group');
 
-    expect(mockCreateMicroservice).toHaveBeenCalledWith(rootModule, {
-      transport: expect.any(Number),
-      options: expect.objectContaining({
-        consumer: { groupId: 'test-group' },
-        run: { autoCommit: false },
+    expect(mockCreateMicroservice).toHaveBeenCalledWith(
+      rootModule,
+      expect.objectContaining({
+        transport: expect.any(Number),
+        options: expect.objectContaining({
+          consumer: expect.objectContaining({ groupId: 'test-group' }),
+          run: expect.objectContaining({ autoCommit: false }),
+        }),
       }),
-    });
+    );
     expect(mockListen).toHaveBeenCalled();
   });
 

@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@kafkajs/confluent-schema-registry':
+        specifier: ^3.9.0
+        version: 3.9.0
       '@nestjs/axios':
         specifier: ^4.0.1
         version: 4.0.1(@nestjs/common@11.1.14(reflect-metadata@0.2.2)(rxjs@7.8.2))(axios@1.13.6)(rxjs@7.8.2)
@@ -26,6 +29,9 @@ importers:
       '@nestjs/platform-express':
         specifier: ^11.0.1
         version: 11.1.14(@nestjs/common@11.1.14(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.14)
+      '@nestjs/schedule':
+        specifier: ^6.1.1
+        version: 6.1.1(@nestjs/common@11.1.14(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.14)
       '@nestjs/swagger':
         specifier: ^11.2.6
         version: 11.2.6(@nestjs/common@11.1.14(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.14)(reflect-metadata@0.2.2)
@@ -877,6 +883,9 @@ packages:
   '@jridgewell/trace-mapping@0.3.9':
     resolution: {integrity: sha512-3Belt6tdc8bPgAtbcmdtNJlirVoTmEb5e2gC94PnkwEW9jI6CAHUeoG85tjWP5WquqfavoMtMwiG4P926ZKKuQ==}
 
+  '@kafkajs/confluent-schema-registry@3.9.0':
+    resolution: {integrity: sha512-QiwinzNVlHPvylFCSiKBcTDxNDp9/xDj7ZWTxlsel5h4hwLxMLjnuJUcW/LhzNPPi/V4Vfa4Yq0uv30CYGtRnA==}
+
   '@lukeed/csprng@1.1.0':
     resolution: {integrity: sha512-Z7C/xXCiGWsg0KuKsHTKJxbWhpI3Vs5GwLfOean7MGyVFGqdRgBbAjOCh6u4bbjPc/8MJ2pZmK/0DLdCbivLDA==}
     engines: {node: '>=8'}
@@ -1003,6 +1012,12 @@ packages:
       '@nestjs/common': ^11.0.0
       '@nestjs/core': ^11.0.0
 
+  '@nestjs/schedule@6.1.1':
+    resolution: {integrity: sha512-kQl1RRgi02GJ0uaUGCrXHCcwISsCsJDciCKe38ykJZgnAeeoeVWs8luWtBo4AqAAXm4nS5K8RlV0smHUJ4+2FA==}
+    peerDependencies:
+      '@nestjs/common': ^10.0.0 || ^11.0.0
+      '@nestjs/core': ^10.0.0 || ^11.0.0
+
   '@nestjs/schematics@11.0.9':
     resolution: {integrity: sha512-0NfPbPlEaGwIT8/TCThxLzrlz3yzDNkfRNpbL7FiplKq3w4qXpJg0JYwqgMEJnLQZm3L/L/5XjoyfJHUO3qX9g==}
     peerDependencies:
@@ -1120,6 +1135,36 @@ packages:
       react: ^18.0.0 || ^19.0.0
       react-dom: ^18.0.0 || ^19.0.0
 
+  '@protobufjs/aspromise@1.1.2':
+    resolution: {integrity: sha512-j+gKExEuLmKwvz3OgROXtrJ2UG2x8Ch2YZUxahh+s1F2HZ+wAceUNLkvy6zKCPVRkU++ZWQrdxsUeQXmcg4uoQ==}
+
+  '@protobufjs/base64@1.1.2':
+    resolution: {integrity: sha512-AZkcAA5vnN/v4PDqKyMR5lx7hZttPDgClv83E//FMNhR2TMcLUhfRUBHCmSl0oi9zMgDDqRUJkSxO3wm85+XLg==}
+
+  '@protobufjs/codegen@2.0.4':
+    resolution: {integrity: sha512-YyFaikqM5sH0ziFZCN3xDC7zeGaB/d0IUb9CATugHWbd1FRFwWwt4ld4OYMPWu5a3Xe01mGAULCdqhMlPl29Jg==}
+
+  '@protobufjs/eventemitter@1.1.0':
+    resolution: {integrity: sha512-j9ednRT81vYJ9OfVuXG6ERSTdEL1xVsNgqpkxMsbIabzSo3goCjDIveeGv5d03om39ML71RdmrGNjG5SReBP/Q==}
+
+  '@protobufjs/fetch@1.1.0':
+    resolution: {integrity: sha512-lljVXpqXebpsijW71PZaCYeIcE5on1w5DlQy5WH6GLbFryLUrBD4932W/E2BSpfRJWseIL4v/KPgBFxDOIdKpQ==}
+
+  '@protobufjs/float@1.0.2':
+    resolution: {integrity: sha512-Ddb+kVXlXst9d+R9PfTIxh1EdNkgoRe5tOX6t01f1lYWOvJnSPDBlG241QLzcyPdoNTsblLUdujGSE4RzrTZGQ==}
+
+  '@protobufjs/inquire@1.1.0':
+    resolution: {integrity: sha512-kdSefcPdruJiFMVSbn801t4vFK7KB/5gd2fYvrxhuJYg8ILrmn9SKSX2tZdV6V+ksulWqS7aXjBcRXl3wHoD9Q==}
+
+  '@protobufjs/path@1.1.2':
+    resolution: {integrity: sha512-6JOcJ5Tm08dOHAbdR3GrvP+yUUfkjG5ePsHYczMFLq3ZmMkAD98cDgcT2iA1lJ9NVwFd4tH/iSSoe44YWkltEA==}
+
+  '@protobufjs/pool@1.1.0':
+    resolution: {integrity: sha512-0kELaGSIDBKvcgS4zkjz1PeddatrjYcmMWOlAuAPwAeccUrPHdUqo/J6LiymHHEiJT5NrF1UVwxY14f+fy4WQw==}
+
+  '@protobufjs/utf8@1.1.0':
+    resolution: {integrity: sha512-Vvn3zZrhQZkkBE8LSuW3em98c0FwgO4nxzv6OdSxPKJIEKY2bGbHn+mhGIPerzI4twdxaP8/0+06HBpwf345Lw==}
+
   '@scarf/scarf@1.4.0':
     resolution: {integrity: sha512-xxeapPiUXdZAE3che6f3xogoJPeZgig6omHEy1rIY5WVsB3H2BHNnZH+gHG6x91SCWyQCzWGsuL2Hh3ClO5/qQ==}
 
@@ -1210,6 +1255,9 @@ packages:
 
   '@types/json-schema@7.0.15':
     resolution: {integrity: sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==}
+
+  '@types/luxon@3.7.1':
+    resolution: {integrity: sha512-H3iskjFIAn5SlJU7OuxUmTEpebK6TKB8rxZShDslBMZJ5u9S//KM1sbdAisiSrqwLQncVjnpi2OK2J51h+4lsg==}
 
   '@types/methods@1.1.4':
     resolution: {integrity: sha512-ymXWVrDiCxTBE3+RIrrP533E70eA+9qu7zdWoHuOmGujkYtzf4HQF96b8nwHLqhuf4ykX61IGRIB38CC6/sImQ==}
@@ -1508,6 +1556,9 @@ packages:
   ajv@6.14.0:
     resolution: {integrity: sha512-IWrosm/yrn43eiKqkfkHis7QioDleaXQHdDVPKg0FSwwd/DuvyX79TZnFOnYpB7dcsFAMmtFztZuXPDvSePkFw==}
 
+  ajv@7.2.4:
+    resolution: {integrity: sha512-nBeQgg/ZZA3u3SYxyaDvpvDtgZ/EZPF547ARgZBrG9Bhu1vKDwAIjtIf+sDtJUKa2zOcEbmRLBRSyMraS/Oy1A==}
+
   ajv@8.17.1:
     resolution: {integrity: sha512-B/gBuNg5SiMTrPkC+A2+cW0RszwxYmn6VYxB/inlBStS5nx6xHIt/ehKRhIMhqusl7a8LjQoZnjCs5vhwxOQ1g==}
 
@@ -1570,6 +1621,10 @@ packages:
 
   asynckit@0.4.0:
     resolution: {integrity: sha512-Oei9OH4tRh0YqU3GxhX79dM/mwVgvbZJaSNaRk+bshkj0S5cfHcgYakreBjrHwatXKbz+IoIdYLxrKim2MjW0Q==}
+
+  avsc@5.7.9:
+    resolution: {integrity: sha512-yOA4wFeI7ET3v32Di/sUybQ+ttP20JHSW3mxLuNGeO0uD6PPcvLrIQXSvy/rhJOWU5JrYh7U4OHplWMmtAtjMg==}
+    engines: {node: '>=0.11'}
 
   aws-ssl-profiles@1.1.2:
     resolution: {integrity: sha512-NZKeq9AfyQvEeNlN0zSYAaWrmBffJh3IELMZfRpJVWgrpEbtEpnjvzqBPf+mxoI287JohRDoa+/nsfqqiZmF6g==}
@@ -1845,6 +1900,10 @@ packages:
 
   create-require@1.1.1:
     resolution: {integrity: sha512-dcKFX3jn0MpIaXjisoRvexIJVEKzaq7z2rZKxf+MSr9TkdmHmsU4m2lcLojrj/FHl8mk5VxMmYA+ftRkP/3oKQ==}
+
+  cron@4.4.0:
+    resolution: {integrity: sha512-fkdfq+b+AHI4cKdhZlppHveI/mgz2qpiYxcm+t5E5TsxX7QrLS1VE0+7GENEk9z0EeGPcpSciGv6ez24duWhwQ==}
+    engines: {node: '>=18.x'}
 
   cross-spawn@7.0.6:
     resolution: {integrity: sha512-uV2QOWP2nWzsy2aMp8aRibhi9dlzF5Hgh5SHaB9OiTGEyDTiJJyx0uy51QXdyWbtAHNua4XJzUKca3OzKUd3vA==}
@@ -2740,6 +2799,10 @@ packages:
     resolution: {integrity: sha512-DqC6n3QQ77zdFpCMASA1a3Jlb64Hv2N2DciFGkO/4L9+q/IpIAuRlKOvCXabtRW6cQf8usbmM6BE/TOPysCdIA==}
     engines: {bun: '>=1.0.0', deno: '>=1.30.0', node: '>=8.0.0'}
 
+  luxon@3.7.2:
+    resolution: {integrity: sha512-vtEhXh/gNjI9Yg1u4jX/0YVPMvxzHuGgCm6tC5kZyb08yjGWGnqAjGJvcXbqQR2P3MyMEFnRbpcdFS6PBcLqew==}
+    engines: {node: '>=12'}
+
   magic-string@0.30.17:
     resolution: {integrity: sha512-sNPKHvyjVf7gyjwS4xGTaW/mCnF8wnjtifKBEhxfZ7E/S8tQ0rssrwGNn6q8JH/ohItJfSQp9mBtQYuTlH5QnA==}
 
@@ -2752,6 +2815,9 @@ packages:
 
   makeerror@1.0.12:
     resolution: {integrity: sha512-JmqCvUhmt43madlpFzG4BQzG2Z3m6tvQDNKdClZnO3VbIudJYmxsT0FNJMeiB2+JTSlTQTSbU8QdesVmwJcmLg==}
+
+  mappersmith@2.46.1:
+    resolution: {integrity: sha512-Ac9UGnHmf5rNtbOxe/SmEwtFPmb2/ronEwQbWcS6uA6nXxGPyr+dhPpTmzCTmZosdc8reFdeSqOy+khEkCFogA==}
 
   math-intrinsics@1.1.0:
     resolution: {integrity: sha512-/IXtbwEk5HTPyEwyKX6hGkYXxM9nbj64B+ilVJnC/R6B0pH5G4V3b0pVbL7DBj4tkhBAppbQUlf6F6Xl9LHu1g==}
@@ -3122,6 +3188,10 @@ packages:
 
   proper-lockfile@4.1.2:
     resolution: {integrity: sha512-TjNPblN4BwAWMXU8s9AEz4JmQxnD1NNL7bNOY/AKUzyamc379FWASUhc/K1pL2noVb+XmZKLL68cjzLsiOAMaA==}
+
+  protobufjs@7.5.4:
+    resolution: {integrity: sha512-CvexbZtbov6jW2eXAvLukXjXUW1TzFaivC46BpWc/3BpcCysb5Vffu+B3XHMm8lVEuy2Mm4XGex8hBSg1yapPg==}
+    engines: {node: '>=12.0.0'}
 
   proxy-addr@2.0.7:
     resolution: {integrity: sha512-llQsMLSUDUPT44jdrU/O37qlnifitDP+ZwrmmZcoSKyLKvtZxpyV0n2/bD/N4tBAAZ/gJEdZU7KMraoK1+XYAg==}
@@ -4557,6 +4627,13 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
 
+  '@kafkajs/confluent-schema-registry@3.9.0':
+    dependencies:
+      ajv: 7.2.4
+      avsc: 5.7.9
+      mappersmith: 2.46.1
+      protobufjs: 7.5.4
+
   '@lukeed/csprng@1.1.0': {}
 
   '@microsoft/tsdoc@0.16.0': {}
@@ -4668,6 +4745,12 @@ snapshots:
       tslib: 2.8.1
     transitivePeerDependencies:
       - supports-color
+
+  '@nestjs/schedule@6.1.1(@nestjs/common@11.1.14(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.14)':
+    dependencies:
+      '@nestjs/common': 11.1.14(reflect-metadata@0.2.2)(rxjs@7.8.2)
+      '@nestjs/core': 11.1.14(@nestjs/common@11.1.14(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/microservices@11.1.14)(@nestjs/platform-express@11.1.14)(reflect-metadata@0.2.2)(rxjs@7.8.2)
+      cron: 4.4.0
 
   '@nestjs/schematics@11.0.9(chokidar@4.0.3)(typescript@5.9.3)':
     dependencies:
@@ -4814,6 +4897,29 @@ snapshots:
       react: 19.2.4
       react-dom: 19.2.4(react@19.2.4)
 
+  '@protobufjs/aspromise@1.1.2': {}
+
+  '@protobufjs/base64@1.1.2': {}
+
+  '@protobufjs/codegen@2.0.4': {}
+
+  '@protobufjs/eventemitter@1.1.0': {}
+
+  '@protobufjs/fetch@1.1.0':
+    dependencies:
+      '@protobufjs/aspromise': 1.1.2
+      '@protobufjs/inquire': 1.1.0
+
+  '@protobufjs/float@1.0.2': {}
+
+  '@protobufjs/inquire@1.1.0': {}
+
+  '@protobufjs/path@1.1.2': {}
+
+  '@protobufjs/pool@1.1.0': {}
+
+  '@protobufjs/utf8@1.1.0': {}
+
   '@scarf/scarf@1.4.0': {}
 
   '@sinclair/typebox@0.34.48': {}
@@ -4925,6 +5031,8 @@ snapshots:
       pretty-format: 30.2.0
 
   '@types/json-schema@7.0.15': {}
+
+  '@types/luxon@3.7.1': {}
 
   '@types/methods@1.1.4': {}
 
@@ -5244,6 +5352,13 @@ snapshots:
       json-schema-traverse: 0.4.1
       uri-js: 4.4.1
 
+  ajv@7.2.4:
+    dependencies:
+      fast-deep-equal: 3.1.3
+      json-schema-traverse: 1.0.0
+      require-from-string: 2.0.2
+      uri-js: 4.4.1
+
   ajv@8.17.1:
     dependencies:
       fast-deep-equal: 3.1.3
@@ -5298,6 +5413,8 @@ snapshots:
   asap@2.0.6: {}
 
   asynckit@0.4.0: {}
+
+  avsc@5.7.9: {}
 
   aws-ssl-profiles@1.1.2: {}
 
@@ -5592,6 +5709,11 @@ snapshots:
       typescript: 5.9.3
 
   create-require@1.1.1: {}
+
+  cron@4.4.0:
+    dependencies:
+      '@types/luxon': 3.7.1
+      luxon: 3.7.2
 
   cross-spawn@7.0.6:
     dependencies:
@@ -6676,6 +6798,8 @@ snapshots:
 
   lru.min@1.1.4: {}
 
+  luxon@3.7.2: {}
+
   magic-string@0.30.17:
     dependencies:
       '@jridgewell/sourcemap-codec': 1.5.5
@@ -6689,6 +6813,8 @@ snapshots:
   makeerror@1.0.12:
     dependencies:
       tmpl: 1.0.5
+
+  mappersmith@2.46.1: {}
 
   math-intrinsics@1.1.0: {}
 
@@ -7020,6 +7146,21 @@ snapshots:
       graceful-fs: 4.2.11
       retry: 0.12.0
       signal-exit: 3.0.7
+
+  protobufjs@7.5.4:
+    dependencies:
+      '@protobufjs/aspromise': 1.1.2
+      '@protobufjs/base64': 1.1.2
+      '@protobufjs/codegen': 2.0.4
+      '@protobufjs/eventemitter': 1.1.0
+      '@protobufjs/fetch': 1.1.0
+      '@protobufjs/float': 1.0.2
+      '@protobufjs/inquire': 1.1.0
+      '@protobufjs/path': 1.1.2
+      '@protobufjs/pool': 1.1.0
+      '@protobufjs/utf8': 1.1.0
+      '@types/node': 22.19.11
+      long: 5.3.2
 
   proxy-addr@2.0.7:
     dependencies:

@@ -4,13 +4,8 @@ import { TOPICS, EVENT_TYPES } from '@app/contracts';
 import type { EventEnvelope } from '@app/contracts';
 import { KafkaProducer, withRetryAndDlq } from '@app/kafka';
 import { InventoryService } from './inventory.service';
-
-const CONSUMER = 'inventory-service';
-
-interface OrderItem {
-  productId: string;
-  quantity: number;
-}
+import { CONSUMER } from './inventory.constants';
+import type { OrderItem } from './inventory.types';
 
 @Controller()
 export class InventoryEventsController {
@@ -31,7 +26,6 @@ export class InventoryEventsController {
     if (envelope?.type !== EVENT_TYPES.OrderCreated) return;
     const eventId = envelope.eventId;
     if (!eventId) return;
-    if (await this.inventory.isEventProcessed(eventId)) return;
     const orderId = envelope.payload?.orderId ?? envelope.correlationId;
     const items = envelope.payload?.items;
     if (typeof orderId !== 'string' || !Array.isArray(items)) return;
@@ -47,8 +41,8 @@ export class InventoryEventsController {
           consumer: CONSUMER,
         },
         async () => {
-          await this.inventory.markEventProcessed(eventId);
           await this.inventory.handleOrderCreated(
+            eventId,
             orderId,
             items as OrderItem[],
           );
@@ -71,7 +65,6 @@ export class InventoryEventsController {
     if (envelope?.type !== EVENT_TYPES.PaymentFailed) return;
     const eventId = envelope.eventId;
     if (!eventId) return;
-    if (await this.inventory.isEventProcessed(eventId)) return;
     const orderId = envelope.payload?.orderId ?? envelope.correlationId;
     if (typeof orderId !== 'string') return;
 
@@ -86,8 +79,7 @@ export class InventoryEventsController {
           consumer: CONSUMER,
         },
         async () => {
-          await this.inventory.markEventProcessed(eventId);
-          await this.inventory.handlePaymentFailed(orderId);
+          await this.inventory.handlePaymentFailed(eventId, orderId);
         },
       );
     } catch (e) {

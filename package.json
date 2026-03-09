@@ -38,12 +38,14 @@
     "seed:inventory": "tsx apps/inventory-consumer-microservice/prisma/seed.ts"
   },
   "dependencies": {
+    "@kafkajs/confluent-schema-registry": "^3.9.0",
     "@nestjs/axios": "^4.0.1",
     "@nestjs/common": "^11.0.1",
     "@nestjs/config": "^4.0.3",
     "@nestjs/core": "^11.0.1",
     "@nestjs/microservices": "^11.1.14",
     "@nestjs/platform-express": "^11.0.1",
+    "@nestjs/schedule": "^6.1.1",
     "@nestjs/swagger": "^11.2.6",
     "@opensearch-project/opensearch": "^3.5.1",
     "@prisma/adapter-pg": "^7.4.2",

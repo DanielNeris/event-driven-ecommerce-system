@@ -48,6 +48,24 @@ describe('Inventory flow (functional)', () => {
               findUnique: jest.fn().mockResolvedValue(null),
               upsert: jest.fn().mockResolvedValue(undefined),
             },
+            $transaction: jest
+              .fn()
+              .mockImplementation(
+                async (fn: (tx: unknown) => Promise<void>) => {
+                  const tx = {
+                    product: {
+                      updateMany: productUpdateMany,
+                      update: productUpdate,
+                    },
+                    reservation: { create: reservationCreate },
+                    processedEvent: {
+                      findUnique: jest.fn().mockResolvedValue(null),
+                      upsert: jest.fn().mockResolvedValue(undefined),
+                    },
+                  };
+                  return fn(tx);
+                },
+              ),
           },
         },
         {
@@ -65,10 +83,11 @@ describe('Inventory flow (functional)', () => {
   });
 
   it('should reserve stock and emit StockReserved when lock acquired and stock available', async () => {
+    const eventId = 'ev-reserve-1';
     const orderId = 'order-inv-1';
     const items = [{ productId: 'prod-1', quantity: 2 }];
 
-    await service.handleOrderCreated(orderId, items);
+    await service.handleOrderCreated(eventId, orderId, items);
 
     expect(redisSetNxEx).toHaveBeenCalled();
     expect(productUpdateMany).toHaveBeenCalledWith(
@@ -89,7 +108,7 @@ describe('Inventory flow (functional)', () => {
       expect.objectContaining({
         topic: TOPICS.INVENTORY_EVENTS,
         type: EVENT_TYPES.StockReserved,
-        payload: { orderId, items },
+        payload: expect.objectContaining({ orderId, items: expect.any(Array) }),
         key: orderId,
       }),
     );
@@ -99,7 +118,7 @@ describe('Inventory flow (functional)', () => {
   it('should emit StockReservationFailed when out of stock (updateMany count 0)', async () => {
     productUpdateMany.mockResolvedValue({ count: 0 });
 
-    await service.handleOrderCreated('order-oos', [
+    await service.handleOrderCreated('ev-oos', 'order-oos', [
       { productId: 'prod-3', quantity: 99 },
     ]);
 
@@ -112,12 +131,14 @@ describe('Inventory flow (functional)', () => {
   });
 
   it('should release reservations and emit StockReleased on handlePaymentFailed', async () => {
+    const eventId = 'ev-release-1';
     const orderId = 'order-release-1';
     const findMany = jest.fn().mockResolvedValue([
-      { productId: 'p1', quantity: 1 },
-      { productId: 'p2', quantity: 2 },
+      { id: 'res-1', productId: 'p1', quantity: 1 },
+      { id: 'res-2', productId: 'p2', quantity: 2 },
     ]);
-    const updateMany = jest.fn().mockResolvedValue(undefined);
+    const updateMany = jest.fn().mockResolvedValue({ count: 1 });
+    const processedEventUpsert = jest.fn().mockResolvedValue(undefined);
 
     const module = await Test.createTestingModule({
       providers: [
@@ -133,8 +154,23 @@ describe('Inventory flow (functional)', () => {
             },
             processedEvent: {
               findUnique: jest.fn().mockResolvedValue(null),
-              upsert: jest.fn().mockResolvedValue(undefined),
+              upsert: processedEventUpsert,
             },
+            $transaction: jest
+              .fn()
+              .mockImplementation(
+                async (fn: (tx: unknown) => Promise<unknown>) => {
+                  const tx = {
+                    product: {
+                      updateMany: productUpdateMany,
+                      update: productUpdate,
+                    },
+                    reservation: { updateMany },
+                    processedEvent: { upsert: processedEventUpsert },
+                  };
+                  return fn(tx);
+                },
+              ),
           },
         },
         {
@@ -149,22 +185,32 @@ describe('Inventory flow (functional)', () => {
     }).compile();
 
     const invService = module.get(InventoryService);
-    await invService.handlePaymentFailed(orderId);
+    await invService.handlePaymentFailed(eventId, orderId);
 
     expect(findMany).toHaveBeenCalledWith({
       where: { orderId, status: 'RESERVED' },
-      select: { productId: true, quantity: true },
+      select: { id: true, productId: true, quantity: true },
     });
-    expect(productUpdate).toHaveBeenCalledTimes(2);
+    expect(updateMany).toHaveBeenCalledTimes(2); // claim each reservation: RESERVED -> RELEASED
     expect(updateMany).toHaveBeenCalledWith({
-      where: { orderId },
+      where: { id: 'res-1', status: 'RESERVED' },
       data: { status: 'RELEASED' },
     });
+    expect(updateMany).toHaveBeenCalledWith({
+      where: { id: 'res-2', status: 'RESERVED' },
+      data: { status: 'RELEASED' },
+    });
+    expect(productUpdate).toHaveBeenCalledTimes(2);
+    expect(processedEventUpsert).toHaveBeenCalled();
     expect(kafkaEmit).toHaveBeenCalledWith(
       expect.objectContaining({
         topic: TOPICS.INVENTORY_EVENTS,
         type: EVENT_TYPES.StockReleased,
-        payload: { orderId, reason: 'PAYMENT_FAILED' },
+        payload: expect.objectContaining({
+          orderId,
+          reason: 'PAYMENT_FAILED',
+          releasedCount: 2,
+        }),
       }),
     );
   });

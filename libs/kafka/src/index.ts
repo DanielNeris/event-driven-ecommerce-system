@@ -5,3 +5,5 @@ export * from './kafka.config';
 export * from './kafka.constants';
 export * from './kafka.types';
 export * from './retry-dlq.helper';
+export * from './schema-registry.config';
+export * from './schema-registry.service';
